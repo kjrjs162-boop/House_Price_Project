@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>House Price Prediction</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="overlay">
+
+<div class="container">
+
+<h1>
+
+<i class="fa-solid fa-house"></i>
+
+House Price Prediction
+
+</h1>
+
+<p class="subtitle">
+
+Predict House Prices using Machine Learning
+
+</p>
+
+<!-- Location -->
+
+<div class="input-box">
+
+<label>
+
+<i class="fa-solid fa-location-dot"></i>
+
+Location
+
+</label>
+
+<select id="location">
+
+<option value="" selected disabled>Select Location</option>
+
+<option>Patna</option>
+
+<option>Delhi</option>
+
+<option>Mumbai</option>
+
+<option>Bangalore</option>
+
+<option>Chennai</option>
+
+<option>Kolkata</option>
+
+</select>
+
+</div>
+
+<!-- Status -->
+
+<div class="input-box">
+
+<label>
+
+<i class="fa-solid fa-house-circle-check"></i>
+
+Status
+
+</label>
+
+<select id="status">
+
+<option value="" selected disabled>Select Status</option>
+
+<option>Ready to Move</option>
+
+<option>Under Construction</option>
+
+</select>
+
+</div>
+
+<!-- Transaction -->
+
+<div class="input-box">
+
+<label>
+
+<i class="fa-solid fa-money-bill-wave"></i>
+
+Transaction
+
+</label>
+
+<select id="transaction">
+
+<option value="" selected disabled>Select Transaction</option>
+
+<option>Resale</option>
+
+<option>New Property</option>
+
+</select>
+
+</div>
+
+<!-- Furnishing -->
+
+<div class="input-box">
+
+<label>
+
+<i class="fa-solid fa-couch"></i>
+
+Furnishing
+
+</label>
+
+<select id="furnishing">
+
+<option value="" selected disabled>Select Furnishing</option>
+
+<option>Furnished</option>
+
+<option>Semi-Furnished</option>
+
+<option>Unfurnished</option>
+
+</select>
+
+</div>
+
+<!-- Facing -->
+
+<div class="input-box">
+
+<label>
+
+<i class="fa-solid fa-compass"></i>
+
+Facing
+
+</label>
+
+<select id="facing">
+
+<option value="" selected disabled>Select Facing</option>
+
+<option>East</option>
+
+<option>West</option>
+
+<option>North</option>
+
+<option>South</option>
+
+</select>
+
+</div>
+
+<!-- Overlooking -->
+
+<div class="input-box">
+
+<label>
+
+<i class="fa-solid fa-tree-city"></i>
+
+Overlooking
+
+</label>
+
+<select id="overlooking">
+
+<option value="" selected disabled>Select Overlooking</option>
+
+<option>Main Road</option>
+
+<option>Garden/Park</option>
+
+<option>Pool</option>
+
+</select>
+
+</div>
+
+<!-- Ownership -->
+
+<div class="input-box">
+
+<label>
+
+<i class="fa-solid fa-file-contract"></i>
+
+Ownership
+
+</label>
+
+<select id="ownership">
+
+<option value="" selected disabled>Select Ownership</option>
+
+<option>Freehold</option>
+
+<option>Leasehold</option>
+
+</select>
+
+</div>
+
+<!-- Floor -->
+
+<div class="input-box">
+
+<label>
+
+<i class="fa-solid fa-building"></i>
+
+Floor
+
+</label>
+
+<input
+type="number"
+id="floor"
+placeholder="Enter Floor">
+
+</div>
+
+<!-- Bathroom -->
+
+<div class="input-box">
+
+<label>
+
+<i class="fa-solid fa-bath"></i>
+
+Bathroom
+
+</label>
+
+<input
+type="number"
+id="bathroom"
+placeholder="Bathrooms">
+
+</div>
+
+<!-- Balcony -->
+
+<div class="input-box">
+
+<label>
+
+<i class="fa-solid fa-sun"></i>
+
+Balcony
+
+</label>
+
+<input
+type="number"
+id="balcony"
+placeholder="Balconies">
+
+</div>
+
+<!-- Parking -->
+
+<div class="input-box">
+
+<label>
+
+<i class="fa-solid fa-car"></i>
+
+Parking
+
+</label>
+
+<input
+type="number"
+id="parking"
+placeholder="Parking Spaces">
+
+</div>
+
+<!-- Area -->
+
+<div class="input-box">
+
+<label>
+
+<i class="fa-solid fa-ruler-combined"></i>
+
+Carpet Area
+
+</label>
+
+<input
+type="number"
+id="area"
+placeholder="Area in sqft">
+
+</div>
+
+<button onclick="predictPrice()">
+
+<i class="fa-solid fa-calculator"></i>
+
+Predict House Price
+
+</button>
+
+<div class="result-box">
+
+    <img
+        id="houseImage"
+        class="house-image"
+        src="https://cdn-icons-png.flaticon.com/512/619/619153.png"
+        alt="House">
+
+    <h3>
+        Estimated Price
+    </h3>
+
+    <h2 id="result">
+        ₹ 0
+    </h2>
+
+    <p id="houseType" class="house-type">
+        Waiting for Prediction...
+    </p>
+
+    <p id="predictionStatus"></p>
+
+</div>
+
+<footer>
+
+Developed by
+
+<span class="developer">
+
+Kerolos Gerges
+
+</span>
+
+</footer>
+
+</div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>

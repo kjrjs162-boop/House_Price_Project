@@ -1,0 +1,788 @@
+/* ==========================================
+   GOOGLE FONT
+========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* ==========================================
+   RESET
+========================================== */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+/* ==========================================
+   BODY
+========================================== */
+
+body{
+
+background:url("background.jpg") no-repeat center center fixed;
+
+background-size:cover;
+
+min-height:100vh;
+
+animation:bodyFade 1s ease;
+
+}
+
+/* ==========================================
+   BODY ANIMATION
+========================================== */
+
+@keyframes bodyFade{
+
+from{
+
+opacity:0;
+
+}
+
+to{
+
+opacity:1;
+
+}
+
+}
+
+/* ==========================================
+   OVERLAY
+========================================== */
+
+.overlay{
+
+width:100%;
+
+min-height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+padding:30px;
+
+background:rgba(0,0,0,.45);
+
+}
+
+/* ==========================================
+   CARD
+========================================== */
+
+.container{
+
+width:470px;
+
+background:rgba(255,255,255,.18);
+
+backdrop-filter:blur(18px);
+
+-webkit-backdrop-filter:blur(18px);
+
+border-radius:25px;
+
+padding:35px;
+
+border:1px solid rgba(255,255,255,.2);
+
+box-shadow:0 20px 45px rgba(0,0,0,.35);
+
+animation:cardAnimation 1s ease;
+
+}
+
+/* ==========================================
+   CARD ANIMATION
+========================================== */
+
+@keyframes cardAnimation{
+
+from{
+
+opacity:0;
+
+transform:translateY(40px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* ==========================================
+   TITLE
+========================================== */
+
+h1{
+
+text-align:center;
+
+color:white;
+
+font-size:32px;
+
+margin-bottom:8px;
+
+font-weight:700;
+
+}
+
+.subtitle{
+
+text-align:center;
+
+color:#f0f0f0;
+
+margin-bottom:25px;
+
+font-size:14px;
+
+line-height:22px;
+
+}
+
+/* ==========================================
+   INPUT BOX
+========================================== */
+
+.input-box{
+
+margin-bottom:16px;
+
+}
+
+label{
+
+display:block;
+
+color:white;
+
+font-size:14px;
+
+font-weight:600;
+
+margin-bottom:8px;
+
+}
+
+label i{
+
+color:#FFD700;
+
+margin-right:6px;
+
+}
+
+/* ==========================================
+   INPUTS
+========================================== */
+
+input,
+select{
+
+width:100%;
+
+padding:13px 15px;
+
+border:none;
+
+border-radius:12px;
+
+outline:none;
+
+font-size:16px;
+
+background:white;
+
+transition:.35s;
+
+}
+
+input::placeholder{
+
+color:#888;
+
+}
+
+input:focus,
+select:focus{
+
+transform:scale(1.02);
+
+box-shadow:0 0 15px #00bfff;
+
+}
+
+select{
+
+cursor:pointer;
+
+}
+
+select:hover{
+
+background:#f7fbff;
+
+}
+
+/* ==========================================
+   BUTTON
+========================================== */
+
+button{
+
+width:100%;
+
+padding:15px;
+
+margin-top:20px;
+
+border:none;
+
+border-radius:15px;
+
+background:linear-gradient(90deg,#0072ff,#00c6ff);
+
+color:white;
+
+font-size:18px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.35s;
+
+}
+
+button:hover{
+
+transform:translateY(-4px);
+
+box-shadow:0 12px 25px rgba(0,0,0,.35);
+
+}
+
+button:active{
+
+transform:scale(.98);
+
+}
+
+button i{
+
+margin-right:8px;
+
+}
+
+/* ==========================================
+   RESULT BOX
+========================================== */
+
+.result-box{
+
+margin-top:25px;
+
+background:white;
+
+padding:20px;
+
+border-radius:18px;
+
+text-align:center;
+
+animation:resultAnimation .8s ease;
+
+}
+
+.result-box h3{
+
+color:#666;
+
+margin-bottom:10px;
+
+font-size:17px;
+
+}
+
+#result{
+
+font-size:34px;
+
+font-weight:700;
+
+color:#00aa44;
+
+}
+
+#status{
+
+margin-top:10px;
+
+font-size:14px;
+
+color:#008000;
+
+font-weight:600;
+
+}
+
+/* ==========================================
+   RESULT ANIMATION
+========================================== */
+
+@keyframes resultAnimation{
+
+from{
+
+opacity:0;
+
+transform:scale(.85);
+
+}
+
+to{
+
+opacity:1;
+
+transform:scale(1);
+
+}
+
+}
+/* ==========================================
+   FOOTER
+========================================== */
+
+footer{
+
+margin-top:25px;
+
+text-align:center;
+
+color:white;
+
+font-size:14px;
+
+letter-spacing:.5px;
+
+}
+
+/* ==========================================
+   DEVELOPER
+========================================== */
+
+.developer{
+
+font-weight:700;
+
+background:linear-gradient(
+90deg,
+#ff0000,
+#ff9900,
+#ffee00,
+#00ff66,
+#00ccff,
+#0066ff,
+#cc00ff,
+#ff0066
+);
+
+background-size:500%;
+
+background-clip: text;
+-webkit-background-clip: text;
+
+-webkit-text-fill-color:transparent;
+
+animation:developerAnimation 6s linear infinite;
+
+}
+
+@keyframes developerAnimation{
+
+0%{
+
+background-position:0%;
+
+}
+
+100%{
+
+background-position:500%;
+
+}
+
+}
+
+/* ==========================================
+   SCROLLBAR
+========================================== */
+
+::-webkit-scrollbar{
+
+width:8px;
+
+}
+
+::-webkit-scrollbar-track{
+
+background:#f1f1f1;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+background:#00bfff;
+
+border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+background:#007bff;
+
+}
+
+/* ==========================================
+   HOVER EFFECT
+========================================== */
+
+.container:hover{
+
+box-shadow:0 25px 60px rgba(0,0,0,.45);
+
+transition:.4s;
+
+}
+
+.input-box:hover label{
+
+color:#FFD700;
+
+transition:.3s;
+
+}
+
+.result-box:hover{
+
+transform:scale(1.02);
+
+transition:.3s;
+
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+========================================== */
+
+@media (max-width:992px){
+
+.container{
+
+width:90%;
+
+max-width:550px;
+
+padding:30px;
+
+}
+
+h1{
+
+font-size:30px;
+
+}
+
+}
+
+@media (max-width:768px){
+
+.overlay{
+
+padding:20px;
+
+}
+
+.container{
+
+width:95%;
+
+padding:25px;
+
+border-radius:20px;
+
+}
+
+h1{
+
+font-size:26px;
+
+}
+
+.subtitle{
+
+font-size:13px;
+
+}
+
+label{
+
+font-size:13px;
+
+}
+
+input,
+select{
+
+padding:12px;
+
+font-size:14px;
+
+}
+
+button{
+
+padding:14px;
+
+font-size:17px;
+
+}
+
+#result{
+
+font-size:28px;
+
+}
+
+footer{
+
+font-size:13px;
+
+}
+
+}
+
+@media (max-width:480px){
+
+.overlay{
+
+padding:15px;
+
+}
+
+.container{
+
+width:100%;
+
+padding:18px;
+
+border-radius:18px;
+
+}
+
+h1{
+
+font-size:22px;
+
+line-height:30px;
+
+}
+
+.subtitle{
+
+font-size:12px;
+
+margin-bottom:18px;
+
+}
+
+.input-box{
+
+margin-bottom:13px;
+
+}
+
+label{
+
+font-size:12px;
+
+}
+
+input,
+select{
+
+padding:11px;
+
+font-size:13px;
+
+}
+
+button{
+
+padding:13px;
+
+font-size:15px;
+
+}
+
+.result-box{
+
+padding:15px;
+
+}
+
+.result-box h3{
+
+font-size:15px;
+
+}
+
+#result{
+
+font-size:24px;
+
+}
+
+footer{
+
+font-size:12px;
+
+margin-top:20px;
+
+}
+
+}
+
+/* ==========================================
+   SMOOTH TRANSITIONS
+========================================== */
+
+*{
+
+scroll-behavior:smooth;
+
+transition:.25s;
+
+}
+
+/* ==========================================
+   REMOVE NUMBER INPUT ARROWS
+========================================== */
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{
+
+-webkit-appearance:none;
+
+margin:0;
+
+}
+
+input[type=number]{
+
+appearance: textfield;
+-moz-appearance: textfield;
+
+}
+
+/* ==========================================
+   END OF FILE
+========================================== */
+
+/* ===========================
+   HOUSE IMAGE
+=========================== */
+
+.house-image{
+
+    width:110px;
+
+    height:110px;
+
+    display:block;
+
+    margin:0 auto 15px;
+
+    object-fit:contain;
+
+    transition:.5s;
+
+    animation:floatHouse 3s ease-in-out infinite;
+
+}
+
+@keyframes floatHouse{
+
+    0%{
+        transform:translateY(0px);
+    }
+
+    50%{
+        transform:translateY(-8px);
+    }
+
+    100%{
+        transform:translateY(0px);
+    }
+
+}
+
+/* ===========================
+   HOUSE TYPE
+=========================== */
+
+.house-type{
+
+    margin-top:12px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    color:#555;
+
+    text-align:center;
+
+    transition:.4s;
+
+}
+
+/* ===========================
+   RESULT EFFECT
+=========================== */
+
+.result-box{
+
+    transition:.5s;
+
+}
+
+.result-box:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 15px 40px rgba(0,0,0,.25);
+
+}
+
+.house-image:hover{
+
+    transform:scale(1.08);
+
+}
