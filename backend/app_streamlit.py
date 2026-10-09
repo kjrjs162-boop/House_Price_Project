@@ -1,4 +1,3 @@
-
 import os
 
 import joblib
@@ -20,20 +19,17 @@ st.set_page_config(
 
 # =========================================================
 # MODEL LOADING
-# Model file is located in the repository root:
-# House_Price_Project/house_price_model.pkl
+# The model file is located beside this app file:
+# House_Price_Project/backend/house_price_model.pkl
 # =========================================================
 @st.cache_resource
 def load_model():
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    model_path = os.path.abspath(
-        os.path.join(current_dir, "..", "house_price_model.pkl")
-    )
+    model_path = os.path.join(current_dir, "house_price_model.pkl")
 
     if not os.path.isfile(model_path):
         raise FileNotFoundError(
-            "Model file was not found. Expected location: "
-            + model_path
+            "Model file was not found. Expected location: " + model_path
         )
 
     return joblib.load(model_path)
@@ -63,14 +59,13 @@ TRANSLATIONS = {
         "area": "Carpet Area (sq ft)",
         "parking": "Car Parking",
         "predict": "Predict Property Price",
-        "reset_note": "Change the property details and submit again to make another prediction.",
         "welcome": "Welcome to House Price Prediction",
         "welcome_text": "Fill in the property details and let the trained model estimate its price.",
         "result": "Estimated Property Price",
         "success": "Prediction completed successfully.",
         "model_error": "The model could not generate a prediction.",
         "error_details": "Error details",
-        "missing_model": "The model file is missing. Make sure house_price_model.pkl is in the project root and included in the deployed repository.",
+        "missing_model": "The model file is missing. Make sure backend/house_price_model.pkl exists in the deployed project.",
         "invalid_prediction": "The model returned an invalid price. Please check the model and input data.",
         "input_summary": "Submitted Property Details",
         "model_status": "Model Status",
@@ -79,7 +74,6 @@ TRANSLATIONS = {
         "note": "This is a machine learning estimate, not a guaranteed market price.",
         "floor_help": "Enter the floor number. Use 0 for the ground floor if that matches your dataset.",
         "area_help": "Enter the property's carpet area in square feet.",
-        "select": "Select an option",
         "ready": "Ready to Move",
         "construction": "Under Construction",
         "new": "New Property",
@@ -109,6 +103,7 @@ TRANSLATIONS = {
         "none": "None",
         "footer": "House Price Prediction | Machine Learning Project",
         "currency_note": "The currency and price scale depend on the target used to train your model.",
+        "enter_location": "Please enter a location.",
     },
     "العربية": {
         "page_title": "توقع أسعار العقارات",
@@ -130,14 +125,13 @@ TRANSLATIONS = {
         "area": "المساحة الصافية (قدم مربع)",
         "parking": "أماكن انتظار السيارات",
         "predict": "توقع سعر العقار",
-        "reset_note": "غيّر بيانات العقار واضغط على زر التوقع مرة أخرى للحصول على تقدير جديد.",
         "welcome": "مرحبًا بك في تطبيق توقع أسعار العقارات",
         "welcome_text": "أدخل بيانات العقار ليقوم النموذج المدرّب بتقدير سعره.",
         "result": "السعر التقديري للعقار",
         "success": "تم تنفيذ التوقع بنجاح.",
         "model_error": "تعذر على النموذج حساب السعر.",
         "error_details": "تفاصيل الخطأ",
-        "missing_model": "ملف المودل غير موجود. تأكد من وجود house_price_model.pkl في المجلد الرئيسي وإضافته إلى المستودع المنشور.",
+        "missing_model": "ملف المودل غير موجود. تأكد من وجود backend/house_price_model.pkl في المشروع المنشور.",
         "invalid_prediction": "النموذج أعاد سعرًا غير صالح. راجع المودل والبيانات المدخلة.",
         "input_summary": "بيانات العقار المدخلة",
         "model_status": "حالة المودل",
@@ -146,7 +140,6 @@ TRANSLATIONS = {
         "note": "هذا السعر تقدير ناتج عن التعلم الآلي وليس سعرًا سوقيًا مضمونًا.",
         "floor_help": "أدخل رقم الطابق. استخدم 0 للطابق الأرضي إذا كان ذلك متوافقًا مع بيانات التدريب.",
         "area_help": "أدخل المساحة الصافية للعقار بالقدم المربع.",
-        "select": "اختر قيمة",
         "ready": "جاهز للسكن",
         "construction": "تحت الإنشاء",
         "new": "عقار جديد",
@@ -176,6 +169,7 @@ TRANSLATIONS = {
         "none": "لا يوجد",
         "footer": "توقع أسعار العقارات | مشروع تعلم آلي",
         "currency_note": "العملة ومقياس السعر يعتمدان على المتغير المستهدف الذي دُرّب عليه المودل.",
+        "enter_location": "من فضلك أدخل الموقع.",
     },
 }
 
@@ -189,13 +183,11 @@ st.markdown(
     .stApp {
         background: linear-gradient(135deg, #f5f7fb 0%, #eaf0fa 100%);
     }
-
     .block-container {
         max-width: 1200px;
         padding-top: 2rem;
         padding-bottom: 2rem;
     }
-
     .hero {
         background: linear-gradient(120deg, #123a63, #2563a6);
         color: white;
@@ -204,19 +196,16 @@ st.markdown(
         margin-bottom: 1.5rem;
         box-shadow: 0 8px 24px rgba(18, 58, 99, 0.16);
     }
-
     .hero h1 {
         color: white;
         margin-bottom: 0.5rem;
         font-size: 2.1rem;
     }
-
     .hero p {
         color: #e5efff;
         margin-bottom: 0;
         font-size: 1rem;
     }
-
     .result-card {
         background: white;
         padding: 1.6rem;
@@ -225,20 +214,17 @@ st.markdown(
         box-shadow: 0 5px 18px rgba(18, 58, 99, 0.10);
         margin-top: 1rem;
     }
-
     .result-label {
         color: #52657a;
         font-size: 1rem;
         margin-bottom: 0.5rem;
     }
-
     .result-value {
         color: #123a63;
         font-size: 2rem;
         font-weight: 800;
         overflow-wrap: anywhere;
     }
-
     .section-title {
         color: #123a63;
         font-size: 1.2rem;
@@ -246,14 +232,12 @@ st.markdown(
         margin-top: 0.5rem;
         margin-bottom: 0.8rem;
     }
-
     div[data-testid="stForm"] {
         background: rgba(255, 255, 255, 0.88);
         border: 1px solid #dce5f1;
         padding: 1.2rem;
         border-radius: 16px;
     }
-
     div.stButton > button,
     div[data-testid="stFormSubmitButton"] > button {
         background: linear-gradient(120deg, #123a63, #2563a6);
@@ -264,18 +248,15 @@ st.markdown(
         font-weight: 700;
         min-height: 3rem;
     }
-
     div.stButton > button:hover,
     div[data-testid="stFormSubmitButton"] > button:hover {
         color: white;
         border: 1px solid #123a63;
         filter: brightness(1.08);
     }
-
     [data-testid="stSidebar"] {
         background: #edf3fb;
     }
-
     .footer {
         text-align: center;
         color: #64748b;
@@ -296,7 +277,6 @@ language = st.sidebar.selectbox(
     ["English", "العربية"],
     index=0,
 )
-
 t = TRANSLATIONS[language]
 
 if language == "العربية":
@@ -329,36 +309,42 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
 st.markdown(f"### {t['welcome']}")
 st.write(t["welcome_text"])
 
 
 # =========================================================
-# SIDEBAR
+# LOAD MODEL AND SHOW STATUS
 # =========================================================
 st.sidebar.title(f"🏡 {t['sidebar_title']}")
 st.sidebar.write(t["sidebar_text"])
 
+model = None
+model_error_message = None
 try:
     model = load_model()
     model_loaded = True
-except Exception:
-    model = None
+except Exception as error:
     model_loaded = False
+    model_error_message = str(error)
 
 if model_loaded:
     st.sidebar.success(f"✅ {t['model_status']}: {t['loaded']}")
 else:
     st.sidebar.error(f"⚠️ {t['model_status']}: {t['not_loaded']}")
+    with st.sidebar.expander(t["error_details"]):
+        st.code(model_error_message or "Unknown model-loading error")
 
 
 # =========================================================
 # INPUT FORM
-# Keep feature names aligned with the FastAPI model schema.
+# Keep feature names aligned with the model's training schema.
 # =========================================================
 with st.form("house_prediction_form"):
-    st.markdown(f"<div class='section-title'>{t['sidebar_title']}</div>", unsafe_allow_html=True)
+    st.markdown(
+        f"<div class='section-title'>{t['sidebar_title']}</div>",
+        unsafe_allow_html=True,
+    )
 
     col1, col2 = st.columns(2)
 
@@ -372,10 +358,7 @@ with st.form("house_prediction_form"):
 
         status = st.selectbox(
             t["status"],
-            options=[
-                "Ready to Move",
-                "Under Construction",
-            ],
+            options=["Ready to Move", "Under Construction"],
             format_func=lambda value: (
                 t["ready"] if value == "Ready to Move" else t["construction"]
             ),
@@ -517,15 +500,18 @@ with st.form("house_prediction_form"):
 # =========================================================
 if submitted:
     if not location.strip():
-        st.warning(t["location"] + ": please enter a location.")
+        st.warning(t["enter_location"])
         st.stop()
 
     if not model_loaded:
         st.error(t["model_error"])
         st.info(t["missing_model"])
+        if model_error_message:
+            with st.expander(t["error_details"]):
+                st.exception(FileNotFoundError(model_error_message))
         st.stop()
 
-    # These column names match the input schema in backend/app.py.
+    # The feature names must match the columns used during model training.
     input_data = pd.DataFrame(
         [
             {
@@ -554,7 +540,6 @@ if submitted:
             st.stop()
 
         st.success(t["success"])
-
         st.markdown(
             f"""
             <div class="result-card">
@@ -564,7 +549,6 @@ if submitted:
             """,
             unsafe_allow_html=True,
         )
-
         st.caption(t["currency_note"])
         st.info(t["note"])
 
