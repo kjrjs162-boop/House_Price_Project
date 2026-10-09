@@ -1,485 +1,590 @@
 
-import streamlit as st
-import pandas as pd
-import numpy as np
-import joblib
+import os
 
+import joblib
+import numpy as np
+import pandas as pd
+import streamlit as st
+
+
+# =========================================================
+# PAGE CONFIGURATION
+# =========================================================
 st.set_page_config(
-    page_title="EstateIQ | House Price Prediction",
-    page_icon="🏡",
+    page_title="House Price Prediction",
+    page_icon="🏠",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
+
+# =========================================================
+# MODEL LOADING
+# Model file is located in the repository root:
+# House_Price_Project/house_price_model.pkl
+# =========================================================
+@st.cache_resource
+def load_model():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.abspath(
+        os.path.join(current_dir, "..", "house_price_model.pkl")
+    )
+
+    if not os.path.isfile(model_path):
+        raise FileNotFoundError(
+            "Model file was not found. Expected location: "
+            + model_path
+        )
+
+    return joblib.load(model_path)
+
+
+# =========================================================
+# TRANSLATIONS
+# =========================================================
 TRANSLATIONS = {
     "English": {
-        "subtitle": "AI-powered property valuation",
-        "navigation": "NAVIGATION",
-        "dashboard": "Dashboard",
-        "prediction": "Price Prediction",
-        "about": "About",
+        "page_title": "House Price Prediction",
+        "subtitle": "Estimate a property's price using a trained machine learning model.",
         "language": "Language",
-        "welcome": "Find the value of your next property.",
-        "description": "Explore property details and estimate its market value.",
-        "form_title": "Property Details",
+        "sidebar_title": "Property Details",
+        "sidebar_text": "Enter the property information below.",
         "location": "Location",
+        "location_help": "Enter the location exactly as represented in your dataset.",
         "status": "Property Status",
         "transaction": "Transaction Type",
         "furnishing": "Furnishing",
-        "facing": "Facing Direction",
-        "overlooking": "View",
+        "facing": "Facing",
+        "overlooking": "Overlooking",
         "ownership": "Ownership",
+        "floor": "Floor",
         "bathroom": "Bathrooms",
         "balcony": "Balconies",
-        "floor": "Floor Number",
-        "area": "Carpet Area (sqft)",
-        "parking": "Car Parking Spaces",
-        "predict": "Estimate Property Price",
-        "result": "Estimated Property Value",
-        "area_metric": "Carpet Area",
-        "bathroom_metric": "Bathrooms",
-        "location_metric": "Selected Location",
-        "note": "Demo estimate only. Connect your trained model for real predictions.",
+        "area": "Carpet Area (sq ft)",
+        "parking": "Car Parking",
+        "predict": "Predict Property Price",
+        "reset_note": "Change the property details and submit again to make another prediction.",
+        "welcome": "Welcome to House Price Prediction",
+        "welcome_text": "Fill in the property details and let the trained model estimate its price.",
+        "result": "Estimated Property Price",
+        "success": "Prediction completed successfully.",
+        "model_error": "The model could not generate a prediction.",
+        "error_details": "Error details",
+        "missing_model": "The model file is missing. Make sure house_price_model.pkl is in the project root and included in the deployed repository.",
+        "invalid_prediction": "The model returned an invalid price. Please check the model and input data.",
+        "input_summary": "Submitted Property Details",
+        "model_status": "Model Status",
+        "loaded": "Model loaded",
+        "not_loaded": "Model not loaded",
+        "note": "This is a machine learning estimate, not a guaranteed market price.",
+        "floor_help": "Enter the floor number. Use 0 for the ground floor if that matches your dataset.",
+        "area_help": "Enter the property's carpet area in square feet.",
+        "select": "Select an option",
         "ready": "Ready to Move",
         "construction": "Under Construction",
-        "resale": "Resale",
         "new": "New Property",
-        "unfurnished": "Unfurnished",
-        "semi": "Semi-Furnished",
+        "resale": "Resale",
         "furnished": "Furnished",
-        "garden": "Garden / Park",
-        "road": "Main Road",
-        "pool": "Pool",
-        "club": "Club",
-        "other": "Other",
+        "semi_furnished": "Semi-Furnished",
+        "unfurnished": "Unfurnished",
         "freehold": "Freehold",
         "leasehold": "Leasehold",
-        "society": "Co-operative Society",
-        "attorney": "Power of Attorney",
-        "result_caption": "Estimated price in Indian Rupees (INR)",
-        "about_title": "About EstateIQ",
-        "about_text": "A property valuation interface designed to explore housing attributes and estimate property prices.",
-        "tip": "Complete the property details and select Estimate Property Price to view the result.",
+        "power_of_attorney": "Power of Attorney",
+        "cooperative": "Co-operative Society",
+        "north": "North",
+        "south": "South",
+        "east": "East",
+        "west": "West",
+        "north_east": "North-East",
+        "north_west": "North-West",
+        "south_east": "South-East",
+        "south_west": "South-West",
+        "road": "Road",
+        "garden": "Garden",
+        "main_road": "Main Road",
+        "pool": "Pool",
+        "park": "Park",
+        "street": "Street",
+        "other": "Other",
+        "none": "None",
+        "footer": "House Price Prediction | Machine Learning Project",
+        "currency_note": "The currency and price scale depend on the target used to train your model.",
     },
     "العربية": {
-        "subtitle": "تقدير قيمة العقارات بالذكاء الاصطناعي",
-        "navigation": "التنقل",
-        "dashboard": "لوحة التحكم",
-        "prediction": "توقع السعر",
-        "about": "حول التطبيق",
+        "page_title": "توقع أسعار العقارات",
+        "subtitle": "تقدير سعر العقار باستخدام نموذج تعلم آلي مدرّب.",
         "language": "اللغة",
-        "welcome": "اكتشف القيمة التقديرية لعقارك.",
-        "description": "أدخل تفاصيل العقار للحصول على تقدير مبدئي لسعره.",
-        "form_title": "تفاصيل العقار",
+        "sidebar_title": "بيانات العقار",
+        "sidebar_text": "أدخل بيانات العقار في الحقول التالية.",
         "location": "الموقع",
+        "location_help": "اكتب الموقع بنفس الطريقة المستخدمة في بيانات التدريب.",
         "status": "حالة العقار",
         "transaction": "نوع المعاملة",
-        "furnishing": "التأثيث",
+        "furnishing": "حالة الفرش",
         "facing": "الاتجاه",
         "overlooking": "الإطلالة",
-        "ownership": "الملكية",
+        "ownership": "نوع الملكية",
+        "floor": "الطابق",
         "bathroom": "عدد الحمامات",
         "balcony": "عدد الشرفات",
-        "floor": "رقم الطابق",
-        "area": "المساحة (قدم مربع)",
+        "area": "المساحة الصافية (قدم مربع)",
         "parking": "أماكن انتظار السيارات",
-        "predict": "تقدير سعر العقار",
-        "result": "القيمة التقديرية للعقار",
-        "area_metric": "المساحة",
-        "bathroom_metric": "الحمامات",
-        "location_metric": "الموقع المحدد",
-        "note": "هذا تقدير تجريبي فقط. اربط النموذج المدرّب للحصول على تنبؤات فعلية.",
+        "predict": "توقع سعر العقار",
+        "reset_note": "غيّر بيانات العقار واضغط على زر التوقع مرة أخرى للحصول على تقدير جديد.",
+        "welcome": "مرحبًا بك في تطبيق توقع أسعار العقارات",
+        "welcome_text": "أدخل بيانات العقار ليقوم النموذج المدرّب بتقدير سعره.",
+        "result": "السعر التقديري للعقار",
+        "success": "تم تنفيذ التوقع بنجاح.",
+        "model_error": "تعذر على النموذج حساب السعر.",
+        "error_details": "تفاصيل الخطأ",
+        "missing_model": "ملف المودل غير موجود. تأكد من وجود house_price_model.pkl في المجلد الرئيسي وإضافته إلى المستودع المنشور.",
+        "invalid_prediction": "النموذج أعاد سعرًا غير صالح. راجع المودل والبيانات المدخلة.",
+        "input_summary": "بيانات العقار المدخلة",
+        "model_status": "حالة المودل",
+        "loaded": "تم تحميل المودل",
+        "not_loaded": "لم يتم تحميل المودل",
+        "note": "هذا السعر تقدير ناتج عن التعلم الآلي وليس سعرًا سوقيًا مضمونًا.",
+        "floor_help": "أدخل رقم الطابق. استخدم 0 للطابق الأرضي إذا كان ذلك متوافقًا مع بيانات التدريب.",
+        "area_help": "أدخل المساحة الصافية للعقار بالقدم المربع.",
+        "select": "اختر قيمة",
         "ready": "جاهز للسكن",
         "construction": "تحت الإنشاء",
-        "resale": "إعادة بيع",
         "new": "عقار جديد",
-        "unfurnished": "غير مفروش",
-        "semi": "نصف مفروش",
+        "resale": "إعادة بيع",
         "furnished": "مفروش",
-        "garden": "حديقة",
-        "road": "طريق رئيسي",
-        "pool": "حمام سباحة",
-        "club": "نادي",
-        "other": "أخرى",
+        "semi_furnished": "نصف مفروش",
+        "unfurnished": "غير مفروش",
         "freehold": "ملكية حرة",
-        "leasehold": "إيجار طويل الأجل",
-        "society": "جمعية تعاونية",
-        "attorney": "توكيل رسمي",
-        "result_caption": "السعر التقديري بالروبية الهندية",
-        "about_title": "حول EstateIQ",
-        "about_text": "واجهة لتقييم العقارات واستكشاف خصائصها وتقدير أسعارها.",
-        "tip": "أكمل بيانات العقار ثم اضغط على تقدير سعر العقار لعرض النتيجة.",
+        "leasehold": "ملكية إيجارية",
+        "power_of_attorney": "توكيل رسمي",
+        "cooperative": "جمعية تعاونية",
+        "north": "شمال",
+        "south": "جنوب",
+        "east": "شرق",
+        "west": "غرب",
+        "north_east": "شمال شرق",
+        "north_west": "شمال غرب",
+        "south_east": "جنوب شرق",
+        "south_west": "جنوب غرب",
+        "road": "طريق",
+        "garden": "حديقة",
+        "main_road": "طريق رئيسي",
+        "pool": "حمام سباحة",
+        "park": "منتزه",
+        "street": "شارع",
+        "other": "أخرى",
+        "none": "لا يوجد",
+        "footer": "توقع أسعار العقارات | مشروع تعلم آلي",
+        "currency_note": "العملة ومقياس السعر يعتمدان على المتغير المستهدف الذي دُرّب عليه المودل.",
     },
 }
 
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
-}
-
-.stApp {
-    background: linear-gradient(135deg, #f5f7ff 0%, #eef8ff 55%, #f7f3ff 100%);
-}
-
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #111c3d 0%, #192b52 65%, #263f70 100%);
-}
-
-[data-testid="stSidebar"] * {
-    color: #f5f8ff;
-}
-
-.hero {
-    background: linear-gradient(120deg, #172554 0%, #3157b7 55%, #7c3aed 100%);
-    padding: 35px;
-    border-radius: 24px;
-    color: white;
-    margin-bottom: 24px;
-    box-shadow: 0 14px 35px rgba(49, 87, 183, 0.20);
-}
-
-.hero h1 {
-    color: white;
-    font-size: 35px;
-    font-weight: 800;
-    margin-bottom: 10px;
-}
-
-.hero p {
-    color: #e2eaff;
-    font-size: 15px;
-    margin-bottom: 0;
-}
-
-.eyebrow {
-    color: #a5f3fc;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 11px;
-    font-weight: 700;
-}
-
-.section-card {
-    background: rgba(255,255,255,0.92);
-    border: 1px solid #e3e8f5;
-    padding: 22px;
-    border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(26, 42, 80, 0.05);
-    margin-bottom: 18px;
-}
-
-.section-title {
-    color: #18264b;
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 6px;
-}
-
-.section-caption {
-    color: #74809b;
-    font-size: 13px;
-    margin-bottom: 18px;
-}
-
-.metric-card {
-    background: white;
-    border: 1px solid #e3e8f5;
-    border-radius: 18px;
-    padding: 20px;
-    min-height: 112px;
-    box-shadow: 0 8px 22px rgba(26, 42, 80, 0.05);
-}
-
-.metric-label {
-    color: #78849f;
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-.metric-value {
-    color: #172554;
-    font-size: 23px;
-    font-weight: 800;
-    overflow-wrap: anywhere;
-}
-
-.price-card {
-    background: linear-gradient(115deg, #0f766e 0%, #0d9488 55%, #22c5a5 100%);
-    color: white;
-    border-radius: 22px;
-    padding: 28px;
-    margin-top: 20px;
-    box-shadow: 0 12px 30px rgba(13, 148, 136, 0.22);
-}
-
-.price-card h2 {
-    color: white;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.price-card .price {
-    color: white;
-    font-size: 36px;
-    font-weight: 800;
-    overflow-wrap: anywhere;
-}
-
-.price-card p {
-    color: #d1fae5;
-    font-size: 12px;
-}
-
-.stButton > button {
-    background: linear-gradient(90deg, #3157b7, #7c3aed);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 20px;
-    font-weight: 700;
-    min-height: 48px;
-    transition: 0.2s ease;
-}
-
-.stButton > button:hover {
-    color: white;
-    border: none;
-    filter: brightness(1.08);
-    box-shadow: 0 8px 20px rgba(75, 85, 200, 0.25);
-}
-
-div[data-baseweb="select"] > div,
-div[data-baseweb="input"] > div {
-    border-radius: 10px;
-    border-color: #dce3f2;
-}
-
-div[data-testid="stForm"] {
-    background: white;
-    border: 1px solid #e3e8f5;
-    border-radius: 18px;
-    padding: 22px;
-}
-
-.footer {
-    text-align: center;
-    color: #8490a8;
-    font-size: 12px;
-    padding: 24px 0 10px;
-}
-
-@media (max-width: 768px) {
-    .hero { padding: 24px; }
-    .hero h1 { font-size: 27px; }
-    .price-card .price { font-size: 28px; }
-}
-</style>
-""", unsafe_allow_html=True)
-
-with st.sidebar:
-    st.markdown("## 🏡 EstateIQ")
-    st.caption("PROPERTY INTELLIGENCE")
-    st.divider()
-
-    language = st.selectbox(
-        "Language / اللغة",
-        ["English", "العربية"],
-        index=0,
-        key="language",
-    )
-    t = TRANSLATIONS[language]
-
-    page = st.radio(
-        t["navigation"],
-        [t["dashboard"], t["prediction"], t["about"]],
-        index=0,
-    )
-
-    st.divider()
-    st.caption("HOUSE PRICE PREDICTION")
-    st.caption("Version 1.0")
-
-rtl = language == "العربية"
-direction = "rtl" if rtl else "ltr"
-
+# =========================================================
+# CUSTOM STYLING
+# =========================================================
 st.markdown(
-    f'<div dir="{direction}" class="hero">'
-    f'<div class="eyebrow">ESTATEIQ • PROPERTY ANALYTICS</div>'
-    f'<h1>🏡 {t["welcome"]}</h1>'
-    f'<p>{t["description"]}</p>'
-    f'</div>',
+    """
+    <style>
+    .stApp {
+        background: linear-gradient(135deg, #f5f7fb 0%, #eaf0fa 100%);
+    }
+
+    .block-container {
+        max-width: 1200px;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .hero {
+        background: linear-gradient(120deg, #123a63, #2563a6);
+        color: white;
+        padding: 2rem;
+        border-radius: 18px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 24px rgba(18, 58, 99, 0.16);
+    }
+
+    .hero h1 {
+        color: white;
+        margin-bottom: 0.5rem;
+        font-size: 2.1rem;
+    }
+
+    .hero p {
+        color: #e5efff;
+        margin-bottom: 0;
+        font-size: 1rem;
+    }
+
+    .result-card {
+        background: white;
+        padding: 1.6rem;
+        border-radius: 16px;
+        border-left: 6px solid #2563a6;
+        box-shadow: 0 5px 18px rgba(18, 58, 99, 0.10);
+        margin-top: 1rem;
+    }
+
+    .result-label {
+        color: #52657a;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .result-value {
+        color: #123a63;
+        font-size: 2rem;
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+    .section-title {
+        color: #123a63;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-top: 0.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    div[data-testid="stForm"] {
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid #dce5f1;
+        padding: 1.2rem;
+        border-radius: 16px;
+    }
+
+    div.stButton > button,
+    div[data-testid="stFormSubmitButton"] > button {
+        background: linear-gradient(120deg, #123a63, #2563a6);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 0.65rem 1rem;
+        font-weight: 700;
+        min-height: 3rem;
+    }
+
+    div.stButton > button:hover,
+    div[data-testid="stFormSubmitButton"] > button:hover {
+        color: white;
+        border: 1px solid #123a63;
+        filter: brightness(1.08);
+    }
+
+    [data-testid="stSidebar"] {
+        background: #edf3fb;
+    }
+
+    .footer {
+        text-align: center;
+        color: #64748b;
+        padding-top: 2rem;
+        font-size: 0.85rem;
+    }
+    </style>
+    """,
     unsafe_allow_html=True,
 )
 
-if page == t["about"]:
+
+# =========================================================
+# LANGUAGE SELECTION
+# =========================================================
+language = st.sidebar.selectbox(
+    "Language / اللغة",
+    ["English", "العربية"],
+    index=0,
+)
+
+t = TRANSLATIONS[language]
+
+if language == "العربية":
     st.markdown(
-        f'<div dir="{direction}" class="section-card">'
-        f'<div class="section-title">{t["about_title"]}</div>'
-        f'<p>{t["about_text"]}</p>'
-        f'</div>',
+        """
+        <style>
+        .block-container {
+            direction: rtl;
+            text-align: right;
+        }
+        [data-testid="stSidebar"] {
+            direction: rtl;
+            text-align: right;
+        }
+        </style>
+        """,
         unsafe_allow_html=True,
     )
-    st.stop()
 
-locations = [
-    "thane", "mumbai", "pune", "bangalore",
-    "hyderabad", "chennai", "kolkata", "delhi"
-]
 
-with st.form("property_form"):
-    st.markdown(
-        f'<div dir="{direction}" class="section-title">'
-        f'🏠 {t["form_title"]}</div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        f'<div dir="{direction}" class="section-caption">{t["tip"]}</div>',
-        unsafe_allow_html=True,
-    )
+# =========================================================
+# HEADER
+# =========================================================
+st.markdown(
+    f"""
+    <div class="hero">
+        <h1>🏠 {t['page_title']}</h1>
+        <p>{t['subtitle']}</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
-    col1, col2, col3 = st.columns(3)
+st.markdown(f"### {t['welcome']}")
+st.write(t["welcome_text"])
+
+
+# =========================================================
+# SIDEBAR
+# =========================================================
+st.sidebar.title(f"🏡 {t['sidebar_title']}")
+st.sidebar.write(t["sidebar_text"])
+
+try:
+    model = load_model()
+    model_loaded = True
+except Exception:
+    model = None
+    model_loaded = False
+
+if model_loaded:
+    st.sidebar.success(f"✅ {t['model_status']}: {t['loaded']}")
+else:
+    st.sidebar.error(f"⚠️ {t['model_status']}: {t['not_loaded']}")
+
+
+# =========================================================
+# INPUT FORM
+# Keep feature names aligned with the FastAPI model schema.
+# =========================================================
+with st.form("house_prediction_form"):
+    st.markdown(f"<div class='section-title'>{t['sidebar_title']}</div>", unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
 
     with col1:
-        location = st.selectbox(t["location"], locations)
-        status_label = st.selectbox(
-            t["status"], [t["ready"], t["construction"]]
+        location = st.text_input(
+            t["location"],
+            value="",
+            help=t["location_help"],
+            placeholder="Enter location",
         )
-        transaction_label = st.selectbox(
-            t["transaction"], [t["resale"], t["new"]]
+
+        status = st.selectbox(
+            t["status"],
+            options=[
+                "Ready to Move",
+                "Under Construction",
+            ],
+            format_func=lambda value: (
+                t["ready"] if value == "Ready to Move" else t["construction"]
+            ),
         )
-        furnishing_label = st.selectbox(
-            t["furnishing"], [t["unfurnished"], t["semi"], t["furnished"]]
+
+        transaction = st.selectbox(
+            t["transaction"],
+            options=["New Property", "Resale"],
+            format_func=lambda value: (
+                t["new"] if value == "New Property" else t["resale"]
+            ),
+        )
+
+        furnishing = st.selectbox(
+            t["furnishing"],
+            options=["Furnished", "Semi-Furnished", "Unfurnished"],
+            format_func=lambda value: {
+                "Furnished": t["furnished"],
+                "Semi-Furnished": t["semi_furnished"],
+                "Unfurnished": t["unfurnished"],
+            }[value],
+        )
+
+        facing = st.selectbox(
+            t["facing"],
+            options=[
+                "North",
+                "South",
+                "East",
+                "West",
+                "North-East",
+                "North-West",
+                "South-East",
+                "South-West",
+            ],
+            format_func=lambda value: {
+                "North": t["north"],
+                "South": t["south"],
+                "East": t["east"],
+                "West": t["west"],
+                "North-East": t["north_east"],
+                "North-West": t["north_west"],
+                "South-East": t["south_east"],
+                "South-West": t["south_west"],
+            }[value],
+        )
+
+        overlooking = st.selectbox(
+            t["overlooking"],
+            options=[
+                "Road",
+                "Garden",
+                "Main Road",
+                "Pool",
+                "Park",
+                "Street",
+                "Other",
+                "None",
+            ],
+            format_func=lambda value: {
+                "Road": t["road"],
+                "Garden": t["garden"],
+                "Main Road": t["main_road"],
+                "Pool": t["pool"],
+                "Park": t["park"],
+                "Street": t["street"],
+                "Other": t["other"],
+                "None": t["none"],
+            }[value],
         )
 
     with col2:
-        facing = st.selectbox(
-            t["facing"],
-            ["East", "West", "North", "South",
-             "North-East", "North-West", "South-East", "South-West"],
-        )
-        overlooking_label = st.selectbox(
-            t["overlooking"],
-            [t["garden"], t["road"], t["pool"], t["club"], t["other"]],
-        )
-        ownership_label = st.selectbox(
+        ownership = st.selectbox(
             t["ownership"],
-            [t["freehold"], t["leasehold"], t["society"], t["attorney"]],
-        )
-        bathroom = st.number_input(
-            t["bathroom"], min_value=1, max_value=10, value=2
+            options=[
+                "Freehold",
+                "Leasehold",
+                "Power of Attorney",
+                "Co-operative Society",
+            ],
+            format_func=lambda value: {
+                "Freehold": t["freehold"],
+                "Leasehold": t["leasehold"],
+                "Power of Attorney": t["power_of_attorney"],
+                "Co-operative Society": t["cooperative"],
+            }[value],
         )
 
-    with col3:
-        balcony = st.number_input(
-            t["balcony"], min_value=0, max_value=5, value=1
-        )
         floor = st.number_input(
-            t["floor"], min_value=0, max_value=100, value=2
+            t["floor"],
+            min_value=0.0,
+            max_value=200.0,
+            value=0.0,
+            step=1.0,
+            help=t["floor_help"],
         )
+
+        bathroom = st.number_input(
+            t["bathroom"],
+            min_value=0.0,
+            max_value=50.0,
+            value=1.0,
+            step=1.0,
+        )
+
+        balcony = st.number_input(
+            t["balcony"],
+            min_value=0.0,
+            max_value=20.0,
+            value=0.0,
+            step=1.0,
+        )
+
         carpet_area = st.number_input(
-            t["area"], min_value=100.0, max_value=10000.0, value=600.0
+            t["area"],
+            min_value=1.0,
+            max_value=1000000.0,
+            value=1000.0,
+            step=50.0,
+            help=t["area_help"],
         )
-        parking = st.number_input(
-            t["parking"], min_value=0, max_value=10, value=1
+
+        car_parking = st.number_input(
+            t["parking"],
+            min_value=0.0,
+            max_value=100.0,
+            value=0.0,
+            step=1.0,
         )
 
     submitted = st.form_submit_button(
-        f"✨ {t['predict']}", use_container_width=True
+        f"🏠 {t['predict']}",
+        use_container_width=True,
     )
 
+
+# =========================================================
+# PREDICTION
+# =========================================================
 if submitted:
-    status_map = {
-        t["ready"]: "Ready to Move",
-        t["construction"]: "Under Construction",
-    }
-    transaction_map = {
-        t["resale"]: "Resale",
-        t["new"]: "New Property",
-    }
-    furnishing_map = {
-        t["unfurnished"]: "Unfurnished",
-        t["semi"]: "Semi-Furnished",
-        t["furnished"]: "Furnished",
-    }
-    overlooking_map = {
-        t["garden"]: "Garden/Park",
-        t["road"]: "Main Road",
-        t["pool"]: "Pool",
-        t["club"]: "Club",
-        t["other"]: "Other",
-    }
-    ownership_map = {
-        t["freehold"]: "Freehold",
-        t["leasehold"]: "Leasehold",
-        t["society"]: "Co-operative Society",
-        t["attorney"]: "Power of Attorney",
-    }
+    if not location.strip():
+        st.warning(t["location"] + ": please enter a location.")
+        st.stop()
 
-    input_data = pd.DataFrame({
-        "location": [location],
-        "Status": [status_map[status_label]],
-        "Floor": [floor],
-        "Transaction": [transaction_map[transaction_label]],
-        "Furnishing": [furnishing_map[furnishing_label]],
-        "facing": [facing],
-        "overlooking": [overlooking_map[overlooking_label]],
-        "Bathroom": [bathroom],
-        "Balcony": [balcony],
-        "Car Parking": [parking],
-        "Ownership": [ownership_map[ownership_label]],
-        "carpet_area_sqft": [carpet_area],
-    })
+    if not model_loaded:
+        st.error(t["model_error"])
+        st.info(t["missing_model"])
+        st.stop()
 
-    # Demo formula only; replace with your trained model pipeline.
-    prediction = carpet_area * 12000 + bathroom * 500000
-
-    st.markdown(
-        f'<div dir="{direction}" class="price-card">'
-        f'<h2>💎 {t["result"]}</h2>'
-        f'<div class="price">₹ {prediction:,.0f}</div>'
-        f'<p>{t["result_caption"]}</p>'
-        f'</div>',
-        unsafe_allow_html=True,
+    # These column names match the input schema in backend/app.py.
+    input_data = pd.DataFrame(
+        [
+            {
+                "location": location.strip(),
+                "Status": status,
+                "Transaction": transaction,
+                "Furnishing": furnishing,
+                "facing": facing,
+                "overlooking": overlooking,
+                "Ownership": ownership,
+                "Floor": float(floor),
+                "Bathroom": float(bathroom),
+                "Balcony": float(balcony),
+                "carpet_area_sqft": float(carpet_area),
+                "Car Parking": float(car_parking),
+            }
+        ]
     )
 
-    st.write("")
+    try:
+        prediction_array = model.predict(input_data)
+        prediction = float(np.asarray(prediction_array).reshape(-1)[0])
 
-    c1, c2, c3 = st.columns(3)
+        if not np.isfinite(prediction):
+            st.error(t["invalid_prediction"])
+            st.stop()
 
-    with c1:
+        st.success(t["success"])
+
         st.markdown(
-            f'<div dir="{direction}" class="metric-card">'
-            f'<div class="metric-label">{t["area_metric"]}</div>'
-            f'<div class="metric-value">{carpet_area:,.0f} sqft</div>'
-            f'</div>',
+            f"""
+            <div class="result-card">
+                <div class="result-label">{t['result']}</div>
+                <div class="result-value">{prediction:,.2f}</div>
+            </div>
+            """,
             unsafe_allow_html=True,
         )
 
-    with c2:
-        st.markdown(
-            f'<div dir="{direction}" class="metric-card">'
-            f'<div class="metric-label">{t["bathroom_metric"]}</div>'
-            f'<div class="metric-value">{bathroom}</div>'
-            f'</div>',
-            unsafe_allow_html=True,
-        )
+        st.caption(t["currency_note"])
+        st.info(t["note"])
 
-    with c3:
-        st.markdown(
-            f'<div dir="{direction}" class="metric-card">'
-            f'<div class="metric-label">{t["location_metric"]}</div>'
-            f'<div class="metric-value">{location.title()}</div>'
-            f'</div>',
-            unsafe_allow_html=True,
-        )
+        with st.expander(t["input_summary"]):
+            st.dataframe(input_data, use_container_width=True)
 
-    st.info(f"ℹ️ {t['note']}")
+    except Exception as error:
+        st.error(t["model_error"])
+        st.caption(t["error_details"])
+        st.exception(error)
 
+
+# =========================================================
+# FOOTER
+# =========================================================
 st.markdown(
-    '<div class="footer">ESTATEIQ • HOUSE PRICE PREDICTION</div>',
+    f"""
+    <div class="footer">
+        {t['footer']}
+    </div>
+    """,
     unsafe_allow_html=True,
 )
